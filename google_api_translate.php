@@ -2,7 +2,7 @@
 $text = 'book';
 echo translate($text);
 
-function translate($text,$which_method = 1,$source_lang = 'en',$to_lang = 'zh-TW')
+function translate($text,$which_method = 3,$source_lang = 'en',$to_lang = 'zh-TW')
 {
 	$text = urlencode($text);
 	
@@ -21,8 +21,9 @@ function translate($text,$which_method = 1,$source_lang = 'en',$to_lang = 'zh-TW
 			return $res_preg[1];
 		break;
 		
-		//正規，超量要收費的方法
-		case 2:		
+		//正規，超量要收費的方法		
+		case 2:
+			//1. 收費方式：每次累積計量到100 萬個字元，收20塊美金(600多台幣)。如：a book = 6 個字元(空白也算)
 			require_once('../pd/google_api_translate_key.php');
 			
 			$ch = curl_init('https://www.googleapis.com/language/translate/v2?key='.google_api_translate_key.'&source='.$source_lang.'&target='.$to_lang.'&q='.$text);
@@ -35,7 +36,20 @@ function translate($text,$which_method = 1,$source_lang = 'en',$to_lang = 'zh-TW
 			$res = substr($res,0,-1);
 			$res = json_decode($res,true);
 			return $res['data']['translations'][0]['translatedText'];			
-		break;		
+		break;
+		
+		//備案
+		case 3:
+		    //1. yandex：拿key 要留email、沒繁體(沒試過)			
+			//   https://tech.yandex.com/translate/ 
+			
+			//2. zho.hablaa.com，只能單字、答案太多、翻不準： 			
+			$target_url = 'http://hablaa.com/hs/translation/'.$text.'/eng-chi/';
+			$res = file_get_contents($target_url);
+			$res = json_decode($res);
+			echo '<pre>';
+			print_r($res);  			
+		break;
 	}
 }
 ?>
