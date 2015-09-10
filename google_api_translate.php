@@ -8,7 +8,7 @@ function translate($text,$which_method = 1,$source_lang = 'en',$to_lang = 'zh-TW
 	
 	switch($which_method)
 	{
-		//免費的api
+		//免費的api 方法
 		case 1:
 			$ch = curl_init('https://translate.googleapis.com/translate_a/single?client=gtx&sl='.$source_lang.'&tl='.$to_lang.'&dt=t&q='.$text);
 			curl_setopt($ch,CURLOPT_RETURNTRANSFER,1); 
