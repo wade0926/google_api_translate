@@ -22,15 +22,19 @@ function translate($text,$which_method = 1,$source_lang = 'en',$to_lang = 'zh-TW
 		break;
 		
 		//正規，超量要收費的方法
-		case 2:
+		case 2:		
 			require_once('../pd/google_api_translate_key.php');
 			
 			$ch = curl_init('https://www.googleapis.com/language/translate/v2?key='.google_api_translate_key.'&source='.$source_lang.'&target='.$to_lang.'&q='.$text);
+			curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
 			curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
 			$res = curl_exec($ch);
-			curl_close($ch);
-			
-			return $res;			
+			curl_close($ch);		
+						
+			//去掉最後一個字元：1
+			$res = substr($res,0,-1);
+			$res = json_decode($res,true);
+			return $res['data']['translations'][0]['translatedText'];			
 		break;		
 	}
 }
